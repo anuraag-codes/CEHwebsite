@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CEH v13 Flashcards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #fafaf9;
+      --surface: #ffffff;
+      --border: #e8e6e1;
+      --border-strong: #ccc9c2;
+      --text: #1a1916;
+      --text-muted: #7a7770;
+      --text-light: #b0ada6;
+      --accent: #1a1916;
+      --accent-hover: #3d3b38;
+      --correct: #1a6b3c;
+      --correct-bg: #f0faf4;
+      --wrong: #8b1a1a;
+      --wrong-bg: #fdf2f2;
+      --tag-bg: #f2f0eb;
+      --progress-fill: #1a1916;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 20px 60px;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .logo-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .logo-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Daily Progress ── */
+    .progress-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+    .progress-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+    .progress-bar-wrap {
+      width: 140px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--progress-fill);
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    }
+    .progress-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .progress-count span { color: var(--text-light); font-weight: 400; }
+
+    /* ── Domain filter ── */
+    .domain-strip {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .domain-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .domain-pill:hover { border-color: var(--border-strong); color: var(--text); }
+    .domain-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── Card ── */
+    .card-wrap {
+      width: 100%;
+      max-width: 760px;
+      perspective: 1200px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px 44px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      transition: box-shadow 0.2s;
+      animation: fadeSlide 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .card-domain {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: var(--tag-bg);
+      padding: 4px 10px;
+      border-radius: 99px;
+    }
+    .card-difficulty {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 99px;
+    }
+    .diff-easy   { background: #f0faf4; color: #1a6b3c; }
+    .diff-medium { background: #fff8ed; color: #8a5a00; }
+    .diff-hard   { background: #fdf2f2; color: #8b1a1a; }
+
+    .card-qnum {
+      margin-left: auto;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: var(--text-light);
+    }
+
+    .card-question {
+      font-size: 17px;
+      line-height: 1.65;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    /* ── Options ── */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      list-style: none;
+    }
+    .option-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+      font-family: 'Sora', sans-serif;
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--text);
+      transition: all 0.15s;
+      width: 100%;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--border-strong);
+      background: var(--tag-bg);
+    }
+    .option-btn:disabled { cursor: default; }
+    .option-letter {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-light);
+      min-width: 18px;
+      margin-top: 1px;
+    }
+    .option-btn.correct {
+      border-color: var(--correct);
+      background: var(--correct-bg);
+    }
+    .option-btn.correct .option-letter { color: var(--correct); }
+    .option-btn.wrong {
+      border-color: var(--wrong);
+      background: var(--wrong-bg);
+    }
+    .option-btn.wrong .option-letter { color: var(--wrong); }
+    .option-btn.reveal-correct {
+      border-color: var(--correct);
+      background: var(--correct-bg);
+      opacity: 0.6;
+    }
+
+    /* ── Explanation ── */
+    .explanation-box {
+      border-top: 1.5px solid var(--border);
+      padding-top: 20px;
+      animation: fadeSlide 0.3s ease;
+    }
+    .explanation-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .explanation-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    /* ── Actions ── */
+    .actions {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .btn-primary {
+      flex: 1;
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: -0.01em;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      padding: 14px 20px;
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--border-strong); }
+
+    /* ── Loading skeleton ── */
+    .skeleton {
+      background: linear-gradient(90deg, var(--tag-bg) 25%, var(--border) 50%, var(--tag-bg) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 6px;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skeleton-line { height: 16px; margin-bottom: 10px; }
+    .skeleton-line.short { width: 40%; }
+    .skeleton-line.medium { width: 70%; }
+    .skeleton-line.full { width: 100%; }
+    .skeleton-option {
+      height: 52px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* ── Day complete ── */
+    .day-complete {
+      width: 100%;
+      max-width: 760px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 60px 44px;
+      text-align: center;
+      animation: fadeSlide 0.4s ease;
+    }
+    .day-complete-icon { font-size: 48px; margin-bottom: 20px; }
+    .day-complete h2 { font-size: 24px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.03em; }
+    .day-complete p { font-size: 15px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; }
+    .score-display {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 42px;
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+    .score-label { font-size: 12px; color: var(--text-light); margin-bottom: 32px; }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      width: 100%;
+      max-width: 760px;
+      display: flex;
+      gap: 1px;
+      margin-bottom: 32px;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 6px;
+    }
+    .stat-seg {
+      flex: 1;
+      height: 100%;
+      transition: background 0.3s;
+    }
+    .stat-seg.answered-correct { background: var(--correct); }
+    .stat-seg.answered-wrong   { background: #e8b4b4; }
+    .stat-seg.unanswered       { background: var(--border); }
+
+    /* ── Error state ── */
+    .error-box {
+      background: var(--wrong-bg);
+      border: 1.5px solid #e8b4b4;
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      width: 100%;
+      max-width: 760px;
+      font-size: 14px;
+      color: var(--wrong);
+      line-height: 1.6;
+    }
+
+    /* ── API Key setup ── */
+    .setup-card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px 44px;
+      box-shadow: var(--shadow);
+      animation: fadeSlide 0.35s ease;
+    }
+    .setup-card h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.03em; }
+    .setup-card p { font-size: 14px; color: var(--text-muted); line-height: 1.65; margin-bottom: 28px; }
+    .field-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: block;
+    }
+    .api-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+      outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.15s;
+    }
+    .api-input:focus { border-color: var(--border-strong); }
+    .api-note {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+    .api-note a { color: var(--text-muted); }
+
+    /* ── Responsive: tablet ── */
+    @media (max-width: 800px) {
+      body { padding: 24px 18px 56px; }
+      .card { padding: 32px 32px; }
+    }
+
+    /* ── Responsive: phone ── */
+    @media (max-width: 600px) {
+      body { padding: 16px 14px 48px; }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+
+      .progress-block {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 6px;
+      }
+      .progress-label { order: 0; }
+      .progress-count { order: 1; }
+      .progress-bar-wrap { width: 100%; order: 2; flex-basis: 100%; }
+
+      .domain-strip { gap: 6px; margin-bottom: 20px; }
+      .domain-pill { font-size: 9px; padding: 4px 10px; }
+
+      .card { padding: 22px 18px; min-height: 200px; gap: 18px; }
+      .card-question { font-size: 15px; }
+      .option-btn { font-size: 13.5px; padding: 12px 14px; gap: 12px; }
+
+      .actions { flex-direction: column; gap: 10px; }
+      .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+
+      .setup-card { padding: 32px 22px; }
+      .day-complete { padding: 36px 22px; }
+      .score-display { font-size: 34px; }
+      .day-complete h2 { font-size: 20px; }
+      .day-complete p { font-size: 14px; }
+    }
+
+    /* ── Responsive: small phone ── */
+    @media (max-width: 390px) {
+      body { padding: 12px 10px 40px; }
+      .logo-title { font-size: 15px; }
+      .logo-label { font-size: 9px; }
+      .card { padding: 18px 14px; }
+      .card-question { font-size: 14px; }
+      .option-btn { font-size: 12.5px; padding: 10px 12px; gap: 10px; }
+      .option-letter { font-size: 11px; }
+      .explanation-text { font-size: 13px; }
+      .score-display { font-size: 28px; }
+      .day-complete h2 { font-size: 18px; }
+      .day-complete-icon { font-size: 38px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-label">EC-Council · 312-50v13 · Groq</span>
+    <span class="logo-title">CEH Flashcards</span>
+  </div>
+  <div class="progress-block" id="progressBlock" style="display:none">
+    <div class="progress-label">Daily Target</div>
+    <div class="progress-count" id="progressCount">0 <span>/ 20</span></div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
+  </div>
+</header>
+
+<div class="domain-strip" id="domainStrip" style="display:none"></div>
+<div class="stats-bar" id="statsBar" style="display:none"></div>
+
+<div id="root"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────
+const DAILY_TARGET = 20;
+const DOMAINS = [
+  { id: 'all',            label: 'All Domains' },
+  { id: 'recon',         label: 'Reconnaissance' },
+  { id: 'scanning',      label: 'Scanning & Enum' },
+  { id: 'system',        label: 'System Hacking' },
+  { id: 'malware',       label: 'Malware Threats' },
+  { id: 'sniffing',      label: 'Sniffing & Hijack' },
+  { id: 'social',        label: 'Social Engineering' },
+  { id: 'web',           label: 'Web & SQL' },
+  { id: 'wireless',      label: 'Wireless & Mobile' },
+  { id: 'cloud',         label: 'Cloud & IoT' },
+  { id: 'crypto',        label: 'Cryptography' },
+  { id: 'evading',       label: 'Evading Controls' },
+];
+
+let state = {
+  apiKey: localStorage.getItem('ceh_api_key') || '',
+  activeDomain: 'all',
+  currentQ: null,
+  answered: null,      // index selected, or null
+  loading: false,
+  error: null,
+  // daily tracking (resets per calendar day)
+  dailyRecord: loadDailyRecord(),
+  qIndex: 0,
+};
+
+function loadDailyRecord() {
+  const today = new Date().toISOString().slice(0, 10);
+  const raw = localStorage.getItem('ceh_daily');
+  if (raw) {
+    try {
+      const rec = JSON.parse(raw);
+      if (rec.date === today) return rec;
+    } catch(e) {}
+  }
+  return { date: today, answered: 0, correct: 0, results: [] };
+}
+
+function saveDailyRecord() {
+  localStorage.setItem('ceh_daily', JSON.stringify(state.dailyRecord));
+}
+
+// ─────────────────────────────────────────────
+// Rendering
+// ─────────────────────────────────────────────
+const root = document.getElementById('root');
+
+function render() {
+  if (!state.apiKey) { renderSetup(); return; }
+
+  // Show chrome
+  document.getElementById('progressBlock').style.display = '';
+  document.getElementById('domainStrip').style.display = '';
+  document.getElementById('statsBar').style.display = '';
+
+  renderDomains();
+  updateProgress();
+  renderStatsBar();
+
+  const done = state.dailyRecord.answered >= DAILY_TARGET;
+  if (done && !state.currentQ) {
+    renderDayComplete();
+    return;
+  }
+
+  if (state.loading) { renderLoading(); return; }
+  if (state.error)   { renderError();   return; }
+  if (!state.currentQ) { renderLoading(); fetchQuestion(); return; }
+  renderCard();
+}
+
+function renderSetup() {
+  document.getElementById('progressBlock').style.display = 'none';
+  document.getElementById('domainStrip').style.display = 'none';
+  document.getElementById('statsBar').style.display = 'none';
+
+  root.innerHTML = `
+    <div class="setup-card">
+      <h2>Set up your API key</h2>
+      <p>CEH Flashcards uses the Groq API (GPT OSS 20B) to generate fresh, scenario-based CEH v13 questions. Enter your API key to get started. It's saved locally in your browser.</p>
+      <label class="field-label" for="keyInput">Groq API Key</label>
+      <input class="api-input" id="keyInput" type="password" placeholder="gsk_..." autocomplete="off" />
+      <button class="btn-primary" id="saveKeyBtn">Start Studying →</button>
+      <p class="api-note">Get a free key at <a href="https://console.groq.com/keys" target="_blank" style="color:var(--text-muted)">console.groq.com</a>. Stored only in your browser's localStorage, sent directly to api.groq.com.</p>
+    </div>
+  `;
+  document.getElementById('saveKeyBtn').onclick = () => {
+    const val = document.getElementById('keyInput').value.trim();
+    if (!val.startsWith('gsk_')) { alert('Please enter a valid Groq API key (starts with gsk_).'); return; }
+    state.apiKey = val;
+    localStorage.setItem('ceh_api_key', val);
+    fetchQuestion();
+    render();
+  };
+}
+
+function renderDomains() {
+  const strip = document.getElementById('domainStrip');
+  strip.innerHTML = DOMAINS.map(d => `
+    <button class="domain-pill ${state.activeDomain === d.id ? 'active' : ''}" data-id="${d.id}">${d.label}</button>
+  `).join('');
+  strip.querySelectorAll('.domain-pill').forEach(btn => {
+    btn.onclick = () => {
+      state.activeDomain = btn.dataset.id;
+      state.currentQ = null;
+      state.answered = null;
+      state.error = null;
+      render();
+    };
+  });
+}
+
+function updateProgress() {
+  const count = state.dailyRecord.answered;
+  document.getElementById('progressCount').innerHTML = `${count} <span>/ ${DAILY_TARGET}</span>`;
+  document.getElementById('progressBar').style.width = `${Math.min(100, (count / DAILY_TARGET) * 100)}%`;
+}
+
+function renderStatsBar() {
+  const bar = document.getElementById('statsBar');
+  const results = state.dailyRecord.results;
+  bar.innerHTML = Array.from({ length: DAILY_TARGET }, (_, i) => {
+    const r = results[i];
+    const cls = !r ? 'unanswered' : r ? 'answered-correct' : 'answered-wrong';
+    return `<div class="stat-seg ${cls}"></div>`;
+  }).join('');
+}
+
+function renderLoading() {
+  root.innerHTML = `
+    <div class="card-wrap">
+      <div class="card">
+        <div>
+          <div class="skeleton skeleton-line short" style="margin-bottom:16px"></div>
+          <div class="skeleton skeleton-line full"></div>
+          <div class="skeleton skeleton-line medium"></div>
+        </div>
+        <div>
+          ${[1,2,3,4].map(() => `<div class="skeleton skeleton-option"></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" disabled>Next Question →</button>
+    </div>
+  `;
+}
+
+function renderError() {
+  root.innerHTML = `
+    <div class="error-box">
+      <strong>Error generating question.</strong><br>${state.error}<br><br>
+      Check your API key or network and try again.
+    </div>
+    <div class="actions" style="margin-top:16px">
+      <button class="btn-primary" id="retryBtn">Retry</button>
+      <button class="btn-secondary" id="resetKeyBtn">Change API Key</button>
+    </div>
+  `;
+  document.getElementById('retryBtn').onclick = () => { state.error = null; fetchQuestion(); render(); };
+  document.getElementById('resetKeyBtn').onclick = () => {
+    state.apiKey = ''; localStorage.removeItem('ceh_api_key'); render();
+  };
+}
+
+function renderCard() {
+  const q = state.currentQ;
+  const letters = ['A', 'B', 'C', 'D'];
+  const optionsHTML = q.options.map((opt, i) => {
+    let cls = '';
+    if (state.answered !== null) {
+      if (i === q.correctIndex) cls = 'correct';
+      else if (i === state.answered && i !== q.correctIndex) cls = 'wrong';
+    }
+    return `
+      <li>
+        <button class="option-btn ${cls}" data-i="${i}" ${state.answered !== null ? 'disabled' : ''}>
+          <span class="option-letter">${letters[i]}</span>
+          <span>${opt}</span>
+        </button>
+      </li>`;
+  }).join('');
+
+  const explanationHTML = state.answered !== null ? `
+    <div class="explanation-box">
+      <div class="explanation-label">Explanation</div>
+      <div class="explanation-text">${q.explanation}</div>
+    </div>` : '';
+
+  const diffClass = { Easy: 'diff-easy', Medium: 'diff-medium', Hard: 'diff-hard' }[q.difficulty] || 'diff-medium';
+
+  root.innerHTML = `
+    <div class="card-wrap">
+      <div class="card">
+        <div class="card-meta">
+          <span class="card-domain">${q.domain}</span>
+          <span class="card-difficulty ${diffClass}">${q.difficulty}</span>
+          <span class="card-qnum">#${state.dailyRecord.answered + 1} of ${DAILY_TARGET}</span>
+        </div>
+        <p class="card-question">${q.question}</p>
+        <ul class="options-list">${optionsHTML}</ul>
+        ${explanationHTML}
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-primary" id="nextBtn" ${state.answered === null ? 'disabled' : ''}>
+        ${state.dailyRecord.answered + 1 >= DAILY_TARGET && state.answered !== null ? 'See Results' : 'Next Question →'}
+      </button>
+      <button class="btn-secondary" id="skipBtn" ${state.answered !== null ? 'style="display:none"' : ''}>Skip</button>
+    </div>
+  `;
+
+  root.querySelectorAll('.option-btn').forEach(btn => {
+    btn.onclick = () => {
+      const idx = parseInt(btn.dataset.i);
+      state.answered = idx;
+      const isCorrect = idx === state.currentQ.correctIndex;
+      state.dailyRecord.answered++;
+      state.dailyRecord.results.push(isCorrect);
+      if (isCorrect) state.dailyRecord.correct++;
+      saveDailyRecord();
+      render();
+    };
+  });
+
+  document.getElementById('nextBtn').onclick = () => {
+    state.currentQ = null;
+    state.answered = null;
+    state.error = null;
+    state.qIndex++;
+    if (state.dailyRecord.answered >= DAILY_TARGET) {
+      render(); return;
+    }
+    fetchQuestion();
+    render();
+  };
+
+  const skipBtn = document.getElementById('skipBtn');
+  if (skipBtn) {
+    skipBtn.onclick = () => {
+      state.currentQ = null;
+      state.answered = null;
+      state.error = null;
+      fetchQuestion();
+      render();
+    };
+  }
+}
+
+function renderDayComplete() {
+  const { correct, answered } = state.dailyRecord;
+  const pct = Math.round((correct / answered) * 100);
+  root.innerHTML = `
+    <div class="day-complete">
+      <div class="day-complete-icon">${pct >= 80 ? '🎯' : pct >= 60 ? '📈' : '💪'}</div>
+      <div class="score-display">${pct}%</div>
+      <div class="score-label">${correct} correct out of ${answered} questions</div>
+      <h2>Daily target complete!</h2>
+      <p>Great session. Come back tomorrow for 20 more fresh CEH v13 questions.<br>Consistency is how you pass the exam.</p>
+      <button class="btn-primary" style="max-width:280px;margin:0 auto;display:block" id="continueBtn">Keep Practicing (+20)</button>
+    </div>
+  `;
+  document.getElementById('continueBtn').onclick = () => {
+    // Extend the day's target
+    state.dailyRecord.answered = 0;
+    state.dailyRecord.correct = 0;
+    state.dailyRecord.results = [];
+    saveDailyRecord();
+    state.currentQ = null;
+    state.answered = null;
+    fetchQuestion();
+    render();
+  };
+}
+
+// ─────────────────────────────────────────────
+// Question Generation
+// ─────────────────────────────────────────────
+const DOMAIN_PROMPTS = {
+  all:      'any CEH v13 module (rotate across: reconnaissance, scanning, enumeration, system hacking, malware, sniffing, session hijacking, social engineering, DoS/DDoS, evading IDS/firewalls, web servers, web apps, SQL injection, wireless networks, mobile, IoT/OT, cloud computing, cryptography, AI-driven attacks)',
+  recon:    'footprinting and reconnaissance (OSINT, DNS, WHOIS, Google dorking, Shodan, social media, Maltego, Recon-ng, Nmap basics)',
+  scanning: 'scanning networks and enumeration (Nmap flags, port states, banner grabbing, SNMP, LDAP, SMB enumeration, Nessus, vulnerability scanning)',
+  system:   'system hacking phases (password cracking, privilege escalation, maintaining access, rootkits, keyloggers, steganography, covering tracks)',
+  malware:  'malware threats and analysis (virus types, trojans, worms, ransomware, RATs, fileless malware, sandbox evasion, indicators of compromise)',
+  sniffing: 'sniffing and session hijacking (ARP poisoning, MITM, Wireshark, MAC flooding, VLAN hopping, TCP session hijacking, SSL stripping)',
+  social:   'social engineering (phishing, spear-phishing, vishing, smishing, pretexting, tailgating, baiting, insider threats, BEC)',
+  web:      'web application hacking and SQL injection (OWASP Top 10, XSS, CSRF, IDOR, command injection, SQLi union-based, blind SQLi, Burp Suite, web shells)',
+  wireless: 'wireless and mobile hacking (WEP/WPA2/WPA3 attacks, evil twin, deauth attacks, KRACK, Bluetooth, mobile platform threats, MDM, APK analysis)',
+  cloud:    'cloud computing, IoT, and OT security (AWS/Azure misconfigurations, shared responsibility, container escapes, Shodan IoT, SCADA/ICS attacks, firmware analysis)',
+  crypto:   'cryptography (symmetric vs asymmetric, AES, RSA, hashing MD5/SHA, PKI, digital signatures, certificate attacks, PGP, quantum-resistant crypto)',
+  evading:  'evading IDS, firewalls, and honeypots (fragmentation, TTL manipulation, proxy chains, obfuscation, polymorphic malware, WAF bypass, honeypot detection)',
+};
+
+async function fetchQuestion() {
+  state.loading = true;
+  state.error = null;
+  render();
+
+  const domainHint = DOMAIN_PROMPTS[state.activeDomain] || DOMAIN_PROMPTS.all;
+  const seed = Math.random().toString(36).slice(2, 8);
+
+  const systemPrompt = `You are a CEH v13 exam question generator. Generate realistic, scenario-based multiple-choice questions that mirror the EC-Council 312-50v13 exam style. Questions must be technically accurate, practical, and challenging. Never repeat the same question. Use different scenarios each time.
+
+Respond ONLY with a valid JSON object — no markdown, no code fences, no explanation outside the JSON.
+
+JSON format:
+{
+  "domain": "<short domain name e.g. System Hacking>",
+  "difficulty": "<Easy|Medium|Hard>",
+  "question": "<scenario-based question text>",
+  "options": ["<A text>", "<B text>", "<C text>", "<D text>"],
+  "correctIndex": <0-3>,
+  "explanation": "<2-3 sentence technical explanation of why the answer is correct and why distractors are wrong>"
+}`;
+
+  const userPrompt = `Seed: ${seed}
+Generate one CEH v13 exam question focused on: ${domainHint}.
+Make it scenario-based (e.g. "A penetration tester is..."). Include plausible distractors. Mix difficulty levels.`;
+
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${state.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+        max_tokens: 1000,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
+        ],
+        response_format: { type: 'json_object' },
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API error ${res.status}`);
+    }
+
+    const data = await res.json();
+    const text = data.choices[0].message.content.trim();
+    const clean = text.replace(/```json|```/g, '').trim();
+    const q = JSON.parse(clean);
+
+    // Validate
+    if (!q.question || !Array.isArray(q.options) || q.options.length !== 4 || typeof q.correctIndex !== 'number') {
+      throw new Error('Malformed question response.');
+    }
+
+    state.currentQ = q;
+    state.loading = false;
+    render();
+  } catch (e) {
+    state.loading = false;
+    state.error = e.message;
+    render();
+  }
+}
+
+// ─────────────────────────────────────────────
+// Boot
+// ─────────────────────────────────────────────
+render();
+fetchQuestion();
+</script>
+</body>
+</html>
