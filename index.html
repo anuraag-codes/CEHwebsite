@@ -513,6 +513,173 @@
       transition: width 0.3s ease;
     }
 
+    /* ── Bookmark / Save button ── */
+    .bookmark-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      background: var(--surface);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .bookmark-btn:hover { border-color: var(--border-strong); color: var(--text); }
+    .bookmark-btn.saved {
+      background: #fff8ed;
+      border-color: #e0c97a;
+      color: #8a5a00;
+    }
+    .bookmark-btn .bm-icon { font-size: 13px; line-height: 1; }
+
+    /* ── Bank toggle in header ── */
+    .bank-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      background: var(--surface);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .bank-toggle:hover { border-color: var(--border-strong); color: var(--text); }
+    .bank-toggle.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .bank-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 9px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-weight: 500;
+    }
+    .bank-toggle.active .bank-badge {
+      background: #fff;
+      color: var(--accent);
+    }
+
+    /* ── Saved Bank View ── */
+    .bank-view {
+      width: 100%;
+      max-width: 760px;
+      animation: fadeSlide 0.35s ease;
+    }
+    .bank-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .bank-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+    .bank-count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .bank-topics {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .bank-topic-pill {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 99px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .bank-topic-pill:hover { border-color: var(--border-strong); color: var(--text); }
+    .bank-topic-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .bank-topic-count {
+      font-size: 9px;
+      opacity: 0.7;
+      margin-left: 4px;
+    }
+    .bank-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+    .bank-empty-icon { font-size: 40px; margin-bottom: 16px; }
+    .bank-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      animation: fadeSlide 0.25s ease;
+    }
+    .bank-card-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .bank-card-q {
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .bank-card-answer {
+      font-size: 13px;
+      color: var(--correct);
+      background: var(--correct-bg);
+      padding: 10px 14px;
+      border-radius: 8px;
+      line-height: 1.55;
+      margin-bottom: 10px;
+    }
+    .bank-card-answer strong { font-weight: 600; }
+    .bank-card-explain {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .bank-remove-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--wrong);
+      background: none;
+      border: 1.5px solid #e8b4b4;
+      border-radius: 99px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .bank-remove-btn:hover { background: var(--wrong-bg); }
+
     /* ── Responsive: tablet ── */
     @media (max-width: 800px) {
       body { padding: 24px 18px 56px; }
@@ -591,11 +758,16 @@
     <span class="logo-label">EC-Council · 312-50v13 · Groq</span>
     <span class="logo-title">CEH Flashcards</span>
   </div>
-  <div class="progress-block" id="progressBlock" style="display:none">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="bank-toggle" id="bankToggle" style="display:none" onclick="toggleBank()">
+      <span class="bm-icon">★</span> Saved <span class="bank-badge" id="bankBadge">0</span>
+    </button>
+    <div class="progress-block" id="progressBlock" style="display:none">
     <div class="progress-label">Daily Target</div>
     <div class="progress-count" id="progressCount">0 <span>/ 20</span></div>
     <div class="progress-bar-wrap">
       <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+    </div>
     </div>
   </div>
 </header>
@@ -644,16 +816,6 @@ const DOMAIN_PROMPTS = {
 };
 
 // ─────────────────────────────────────────────
-// Seed API key
-// ─────────────────────────────────────────────
-(function(){
-  if (!localStorage.getItem('ceh_api_key')) {
-    const k = ['gsk_9nUhr','BLjXnjN0','c2KF2enW','Gdyb3FYr','GQvAOMje','u6WrXJcv','96DtnNl'].join('');
-    localStorage.setItem('ceh_api_key', k);
-  }
-})();
-
-// ─────────────────────────────────────────────
 // Week key — questions refresh each week
 // ─────────────────────────────────────────────
 function getWeekKey() {
@@ -665,6 +827,36 @@ function getWeekKey() {
 
 function questionsKey(dayIndex) { return `ceh_q_${getWeekKey()}_${dayIndex}`; }
 function answersKey(dayIndex)   { return `ceh_a_${getWeekKey()}_${dayIndex}`; }
+
+// ── Saved Questions Bank (localStorage) ──
+const BANK_KEY = 'ceh_saved_bank';
+
+function loadBank() {
+  try { return JSON.parse(localStorage.getItem(BANK_KEY)) || []; } catch(e) { return []; }
+}
+function saveBank(bank) {
+  localStorage.setItem(BANK_KEY, JSON.stringify(bank));
+}
+function isQuestionSaved(q) {
+  const bank = loadBank();
+  return bank.some(b => b.question === q.question);
+}
+function toggleSaveQuestion(q) {
+  let bank = loadBank();
+  const idx = bank.findIndex(b => b.question === q.question);
+  if (idx >= 0) {
+    bank.splice(idx, 1);
+  } else {
+    bank.push({ ...q, savedAt: Date.now() });
+  }
+  saveBank(bank);
+  return idx < 0; // returns true if now saved
+}
+function removeFromBank(question) {
+  let bank = loadBank();
+  bank = bank.filter(b => b.question !== question);
+  saveBank(bank);
+}
 
 function loadQuestions(dayIndex) {
   try { return JSON.parse(localStorage.getItem(questionsKey(dayIndex))) || null; } catch(e) { return null; }
@@ -695,6 +887,8 @@ let state = {
   fetching: false,       // batch-fetching in progress
   fetchProgress: 0,      // 0-20 how many fetched so far
   error: null,
+  bankOpen: false,       // viewing the saved bank
+  bankTopic: 'all',     // selected topic filter in bank
 };
 
 // ─────────────────────────────────────────────
@@ -705,8 +899,35 @@ const root = document.getElementById('root');
 // ─────────────────────────────────────────────
 // Rendering
 // ─────────────────────────────────────────────
+function updateBankBadge() {
+  const bank = loadBank();
+  const badge = document.getElementById('bankBadge');
+  const toggle = document.getElementById('bankToggle');
+  if (badge) badge.textContent = bank.length;
+  if (toggle) toggle.style.display = state.apiKey ? '' : 'none';
+}
+
+function toggleBank() {
+  state.bankOpen = !state.bankOpen;
+  state.bankTopic = 'all';
+  render();
+}
+
 function render() {
   if (!state.apiKey) { renderSetup(); return; }
+
+  updateBankBadge();
+  const bankToggle = document.getElementById('bankToggle');
+  if (bankToggle) bankToggle.classList.toggle('active', state.bankOpen);
+
+  if (state.bankOpen) {
+    document.getElementById('progressBlock').style.display = 'none';
+    document.getElementById('dayStrip').style.display = 'none';
+    document.getElementById('domainStrip').style.display = 'none';
+    document.getElementById('statsBar').style.display = 'none';
+    renderBank();
+    return;
+  }
 
   document.getElementById('progressBlock').style.display = '';
   document.getElementById('dayStrip').style.display = '';
@@ -902,6 +1123,7 @@ function renderCard() {
       <button class="btn-primary" id="nextBtn" ${state.answered === null ? 'disabled' : ''}>
         ${isLast ? 'See Results' : 'Next Question →'}
       </button>
+      ${state.answered !== null ? `<button class="bookmark-btn ${isQuestionSaved(q) ? 'saved' : ''}" id="saveBtn"><span class="bm-icon">${isQuestionSaved(q) ? '★' : '☆'}</span>${isQuestionSaved(q) ? 'Saved' : 'Save'}</button>` : ''}
       ${state.answered === null ? '<button class="btn-secondary" id="skipBtn">Skip</button>' : ''}
     </div>
   `;
@@ -924,6 +1146,15 @@ function renderCard() {
     state.answered = null;
     render();
   };
+
+  // Save / bookmark
+  const saveBtn = document.getElementById('saveBtn');
+  if (saveBtn) {
+    saveBtn.onclick = () => {
+      toggleSaveQuestion(q);
+      render();
+    };
+  }
 
   // Skip
   const skipBtn = document.getElementById('skipBtn');
@@ -999,6 +1230,7 @@ function renderReview() {
       <button class="btn-primary" id="nextReviewBtn">
         ${state.qPointer + 1 >= DAILY_TARGET ? 'Back to Results' : 'Next →'}
       </button>
+      <button class="bookmark-btn ${isQuestionSaved(q) ? 'saved' : ''}" id="saveReviewBtn"><span class="bm-icon">${isQuestionSaved(q) ? '★' : '☆'}</span>${isQuestionSaved(q) ? 'Saved' : 'Save'}</button>
     </div>
   `;
 
@@ -1014,6 +1246,92 @@ function renderReview() {
       renderReview();
     }
   };
+  document.getElementById('saveReviewBtn').onclick = () => {
+    toggleSaveQuestion(q);
+    renderReview();
+  };
+}
+
+// ─────────────────────────────────────────────
+// Saved Bank View
+// ─────────────────────────────────────────────
+function renderBank() {
+  const bank = loadBank();
+
+  // Collect unique topics
+  const topicMap = {};
+  bank.forEach(q => {
+    const t = (q.domain || 'Other').trim();
+    topicMap[t] = (topicMap[t] || 0) + 1;
+  });
+  const topics = Object.keys(topicMap).sort();
+
+  const filtered = state.bankTopic === 'all'
+    ? bank
+    : bank.filter(q => (q.domain || 'Other').trim() === state.bankTopic);
+
+  // Topic pills
+  const topicPills = [
+    `<button class="bank-topic-pill ${state.bankTopic === 'all' ? 'active' : ''}" data-topic="all">All<span class="bank-topic-count">${bank.length}</span></button>`,
+    ...topics.map(t =>
+      `<button class="bank-topic-pill ${state.bankTopic === t ? 'active' : ''}" data-topic="${t}">${t}<span class="bank-topic-count">${topicMap[t]}</span></button>`
+    )
+  ].join('');
+
+  const letters = ['A', 'B', 'C', 'D'];
+
+  const cardsHTML = filtered.length === 0
+    ? `<div class="bank-empty">
+        <div class="bank-empty-icon">☆</div>
+        ${bank.length === 0
+          ? 'No saved questions yet.<br>Answer a question, then click <strong>☆ Save</strong> to add it here.'
+          : 'No questions in this topic.'}
+      </div>`
+    : filtered.map((q, idx) => {
+        const diffClass = { Easy: 'diff-easy', Medium: 'diff-medium', Hard: 'diff-hard' }[q.difficulty] || 'diff-medium';
+        const correctLetter = letters[q.correctIndex] || '?';
+        const correctText = q.options?.[q.correctIndex] || '';
+        return `<div class="bank-card" data-idx="${idx}">
+          <div class="bank-card-top">
+            <span class="card-domain">${q.domain || 'General'}</span>
+            <span class="card-difficulty ${diffClass}">${q.difficulty || 'Medium'}</span>
+          </div>
+          <div class="bank-card-q">${q.question}</div>
+          <div class="bank-card-answer"><strong>${correctLetter}.</strong> ${correctText}</div>
+          <div class="bank-card-explain">${q.explanation || ''}</div>
+          <button class="bank-remove-btn" data-question="${idx}">✕ Remove</button>
+        </div>`;
+      }).join('');
+
+  root.innerHTML = `
+    <div class="bank-view">
+      <div class="bank-header">
+        <h2>Saved Questions</h2>
+        <span class="bank-count">${filtered.length} question${filtered.length !== 1 ? 's' : ''}</span>
+      </div>
+      ${topics.length > 0 ? `<div class="bank-topics">${topicPills}</div>` : ''}
+      ${cardsHTML}
+    </div>
+  `;
+
+  // Topic pill clicks
+  root.querySelectorAll('.bank-topic-pill').forEach(btn => {
+    btn.onclick = () => {
+      state.bankTopic = btn.dataset.topic;
+      renderBank();
+    };
+  });
+
+  // Remove buttons
+  root.querySelectorAll('.bank-remove-btn').forEach(btn => {
+    btn.onclick = () => {
+      const i = parseInt(btn.dataset.question);
+      const q = filtered[i];
+      if (q) removeFromBank(q.question);
+      updateBankBadge();
+      renderBank();
+    };
+  });
 }
 
 // ─────────────────────────────────────────────
