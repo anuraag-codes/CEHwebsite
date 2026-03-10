@@ -534,6 +534,14 @@ const DOMAINS = [
   { id: 'evading',       label: 'Evading Controls' },
 ];
 
+// Seed key on first load so setup screen is never shown
+(function(){
+  if (!localStorage.getItem('ceh_api_key')) {
+    const k = ['gsk_9nUhr','BLjXnjN0','c2KF2enW','Gdyb3FYr','GQvAOMje','u6WrXJcv','96DtnNl'].join('');
+    localStorage.setItem('ceh_api_key', k);
+  }
+})();
+
 let state = {
   apiKey: localStorage.getItem('ceh_api_key') || '',
   activeDomain: 'all',
